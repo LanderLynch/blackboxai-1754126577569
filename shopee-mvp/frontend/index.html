@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopee MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Shopee MVP</h1>
+    <p>Your one-stop shop for amazing products</p>
+  </header>
+  <main>
+    <div id="list" class="product-list"></div>
+    <div id="error-message" class="error-message"></div>
+  </main>
+  
+  <script>
+    async function loadProducts() {
+      try {
+        const res = await fetch('http://localhost:3000/products');
+        if (!res.ok) throw new Error('Failed to fetch products.');
+        const products = await res.json();
+        const list = document.getElementById('list');
+        list.innerHTML = products.map(p => `
+          <div class="card">
+            <img src="${p.image}" alt="${p.name}"
+                 onerror="this.onerror=null;this.src='images/fallback.jpg';" />
+            <h3>${p.name}</h3>
+            <p class="price">$${p.price}</p>
+            <button onclick="viewDetail('${p._id}')">View Detail</button>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('error-message').textContent = 'Error: ' + error.message;
+      }
+    }
+    
+    function viewDetail(id) {
+      window.location.href = `product.html?id=${id}`;
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
