@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Detail</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <a class="back-link" href="index.html">← Back to products</a>
+    <h1>Product Detail</h1>
+  </header>
+  <main>
+    <div id="detail" class="detail-card"></div>
+    <div id="error-message" class="error-message"></div>
+  </main>
+  
+  <script>
+    async function loadDetail() {
+      try {
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+        if (!id) throw new Error('No product id provided.');
+        
+        const res = await fetch(`http://localhost:3000/products/${id}`);
+        if (!res.ok) throw new Error('Product not found.');
+        const p = await res.json();
+        
+        document.getElementById('detail').innerHTML = `
+          <img src="${p.image}" alt="${p.name}" 
+               onerror="this.onerror=null;this.src='images/fallback-detail.jpg';" />
+          <div class="product-info">
+            <h2>${p.name}</h2>
+            <p class="price">$${p.price}</p>
+            <button onclick="alert('Added to cart! (This is a demo)')">Add to Cart</button>
+          </div>
+        `;
+      } catch (error) {
+        document.getElementById('error-message').textContent = 'Error: ' + error.message;
+      }
+    }
+
+    loadDetail();
+  </script>
+</body>
+</html>
